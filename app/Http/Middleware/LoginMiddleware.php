@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class LoginMiddleware
@@ -16,10 +16,10 @@ class LoginMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $email = Session::get('email');
-        if ($email) {
-            return $next($request);
+        if (!Auth::check()) {
+            return redirect()->route('auth.login');
         }
-        return redirect()->route('pages.login');
+
+        return $next($request);
     }
 }

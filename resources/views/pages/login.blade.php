@@ -33,9 +33,9 @@
       <h2 class="text-4xl text-gray-900 font-medium">Sign in</h2>
       <p class="text-sm text-gray-500/90 mt-3 mb-5">Welcome back! Please sign in to continue</p>
 
-      @if (Session::has('error'))
-        <div class="text-red-500">{{ Session::get('error') }}</div>
-      @endif
+      @error('email')
+        <div class="text-red-500 text-sm mb-4">{{ $message }}</div>
+      @enderror
 
       <div
         class="flex items-center w-full bg-transparent border border-gray-300/60 h-12 rounded-full overflow-hidden pl-6 gap-2">
@@ -45,10 +45,7 @@
             fill="#6B7280" />
         </svg>
         <input type="email" placeholder="Email" name="email"
-          class="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full">
-        @error('email')
-          <span class="text-red-500 text-sm">{{ $message }}</span>
-        @enderror
+          class="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full" value="{{ old('email') }}">
       </div>
 
       <div
@@ -60,9 +57,6 @@
         </svg>
         <input type="password" placeholder="Password" name="password"
           class="bg-transparent text-gray-500/80 placeholder-gray-500/80 outline-none text-sm w-full h-full">
-        @error('password')
-          <span class="text-red-500 text-sm">{{ $message }}</span>
-        @enderror
       </div>
 
       <button type="submit"

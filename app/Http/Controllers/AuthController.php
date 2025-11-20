@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Services\AuthService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -20,13 +21,32 @@ class AuthController extends Controller
         return view('pages.login');
     }
 
-    public function authenticate(Request $req)
+    public function authenticate(Request $request)
     {
-        $result = $this->authService->authenticate($req);
-        if ($result->status == false) {
-            return redirect()->route('auth.login')->with('error', $result->message);
-        } else {
-            return redirect()->route('welcome');
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if ($this->authService->authenticate($credentials)) {
+            $request->session()->regenerate();
+
+            return redirect()->intended('dashboard');
         }
+
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect('/login');
     }
 }
