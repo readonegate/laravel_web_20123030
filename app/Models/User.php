@@ -13,8 +13,15 @@ class User extends Authenticatable
     use HasFactory;
     protected $table = "users";
     protected $fillable = [
+        'role_id',
         'name',
         'email',
         'password',
     ];
+
+
+    public function role()
+    {
+        return $this->belongsTo(MasterRoles::class, 'role_id', 'id');
+    }
 }

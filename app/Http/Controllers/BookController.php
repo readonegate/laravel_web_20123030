@@ -8,9 +8,20 @@ use Illuminate\Http\Request;
 
 class BookController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $books = Books::with('author')->latest()->paginate(10);
+        $search = $request->query('search');
+
+        // $books = Books::all();
+        $books = Books::with('author')
+            ->when($search, function ($query, $search) {
+                $query->where('title', 'like', '%' . $search . '%')
+                    ->orWhereHas('author', function ($query) use ($search) {
+                        $query->where('name', 'like', '%' . $search . '%');
+                    });
+            })
+            ->latest()
+            ->paginate(10);
         return view('pages.books.index', compact('books'));
     }
 
